@@ -51,10 +51,47 @@
         border: 1px solid rgba(226, 232, 240, 0.8);
       }
       
-      .tab-btn.active {
+      /* Subtle pulse outline animation for selected active tab */
+      @keyframes activePulseOutline {
+        0%, 100% {
+          box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.45), 0 4px 14px rgba(13, 148, 136, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.6), 0 6px 18px rgba(14, 165, 233, 0.4);
+        }
+      }
+
+      #tab-sliding-pill {
         background: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
-        color: #ffffff;
-        box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+        animation: activePulseOutline 2.5s ease-in-out infinite;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .tab-btn {
+        position: relative;
+        z-index: 10;
+        transition: color 0.2s ease;
+      }
+
+      .tab-btn.active {
+        color: #ffffff !important;
+        font-weight: 800 !important;
+      }
+
+      /* Smooth transition animation for menu switching */
+      @keyframes viewTabFade {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.995);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .tab-view-animate {
+        animation: viewTabFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
 
       .coastal-gradient-bg {
@@ -125,30 +162,33 @@
     </div>
   </header>
 
-  <!-- NAVIGATION TABS -->
-  <nav class="bg-slate-200/80 border-b border-slate-300 backdrop-blur-md sticky top-[61px] z-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex space-x-2 py-2 overflow-x-auto no-scrollbar">
-        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active px-4 py-2 rounded-lg text-xs md:text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-chart-pie"></i> Ringkasan & Aturan Sibling
+  <!-- NAVIGATION TABS WITH BOLD CONTRAST BORDER -->
+  <nav class="bg-slate-900 border-t-4 border-t-teal-500 border-b-4 border-b-amber-500 shadow-md sticky top-[61px] z-20">
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2.5">
+      <div id="nav-grid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1.5 relative">
+        <!-- Sliding Pill Background Box -->
+        <div id="tab-sliding-pill" class="absolute rounded-lg pointer-events-none shadow-md z-0 opacity-0"></div>
+
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition-all flex items-center justify-center gap-1.5 text-center">
+          <i class="fa-solid fa-chart-pie shrink-0"></i> <span>Ringkasan & Sibling</span>
         </button>
-        <button onclick="switchTab('petugas')" id="tab-petugas" class="tab-btn px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/60 transition-all flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-user-shield text-emerald-600"></i> Direktori Petugas On-Duty
+        <button onclick="switchTab('petugas')" id="tab-petugas" class="tab-btn px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition-all flex items-center justify-center gap-1.5 text-center">
+          <i class="fa-solid fa-user-shield text-emerald-400 shrink-0"></i> <span>Petugas On-Duty</span>
         </button>
-        <button onclick="switchTab('simulator')" id="tab-simulator" class="tab-btn px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/60 transition-all flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-bolt text-amber-500"></i> Simulator Real-Time 3 Kloter
+        <button onclick="switchTab('simulator')" id="tab-simulator" class="tab-btn px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition-all flex items-center justify-center gap-1.5 text-center">
+          <i class="fa-solid fa-bolt text-amber-400 shrink-0"></i> <span>Simulator 3 Kloter</span>
         </button>
-        <button onclick="switchTab('flowchart')" id="tab-flowchart" class="tab-btn px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/60 transition-all flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-diagram-project"></i> Diagram Flowchart
+        <button onclick="switchTab('flowchart')" id="tab-flowchart" class="tab-btn px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition-all flex items-center justify-center gap-1.5 text-center">
+          <i class="fa-solid fa-diagram-project shrink-0"></i> <span>Flowchart</span>
         </button>
-        <button onclick="switchTab('rundown')" id="tab-rundown" class="tab-btn px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/60 transition-all flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-table-list"></i> Tabel Rundown & Sound
+        <button onclick="switchTab('rundown')" id="tab-rundown" class="tab-btn px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition-all flex items-center justify-center gap-1.5 text-center">
+          <i class="fa-solid fa-table-list shrink-0"></i> <span>Tabel Rundown</span>
         </button>
-        <button onclick="switchTab('hotel')" id="tab-hotel" class="tab-btn px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/60 transition-all flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-hotel text-amber-600"></i> Sarpras Hotel Ono Joglo
+        <button onclick="switchTab('hotel')" id="tab-hotel" class="tab-btn px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition-all flex items-center justify-center gap-1.5 text-center">
+          <i class="fa-solid fa-hotel text-amber-400 shrink-0"></i> <span>Sarpras Hotel</span>
         </button>
-        <button onclick="switchTab('checklist')" id="tab-checklist" class="tab-btn px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/60 transition-all flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-boxes-packing"></i> Logistik PJ Pos
+        <button onclick="switchTab('checklist')" id="tab-checklist" class="tab-btn col-span-2 sm:col-span-2 lg:col-span-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition-all flex items-center justify-center gap-1.5 text-center">
+          <i class="fa-solid fa-boxes-packing shrink-0"></i> <span>Logistik PJ Pos</span>
         </button>
       </div>
     </div>
@@ -160,7 +200,7 @@
     <!-- ========================================== -->
     <!-- TAB 1: ANALISIS DATA PESERTA & ATURAN SIBLING -->
     <!-- ========================================== -->
-    <div id="view-dashboard" class="space-y-6">
+    <div id="view-dashboard" class="space-y-6 tab-view-animate">
 
       <!-- DATA RECAP STAT CARDS -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -953,7 +993,7 @@
         duration: 20,
         k1Start: "08:50", k1End: "09:10",
         k2Start: "09:20", k2End: "09:40",
-        k3Start: "09:50", k1End: "10:10",
+        k3Start: "09:50", k3End: "10:10",
         officers: ["Ust Fera", "Ust Khomsah", "Ust Rika"],
         soundSpec: "Portable Speaker + Mic",
         subGames: [
@@ -973,7 +1013,7 @@
         duration: 10,
         k1Start: "09:10", k1End: "09:20",
         k2Start: "09:40", k2End: "09:50",
-        k3Start: "10:10", k1End: "10:20",
+        k3Start: "10:10", k3End: "10:20",
         officers: ["Ust Monica"],
         soundSpec: "Megaphone / Pemandu Lisan",
         subGames: [
@@ -991,7 +1031,7 @@
         duration: 15,
         k1Start: "09:20", k1End: "09:35",
         k2Start: "09:50", k2End: "10:05",
-        k3Start: "10:20", k1End: "10:35",
+        k3Start: "10:20", k3End: "10:35",
         officers: ["Ust Laili", "Ust Bela"],
         soundSpec: "Portable Bluetooth Speaker Kecil (Background Music Santai)",
         subGames: [
@@ -1009,7 +1049,7 @@
         duration: 25,
         k1Start: "09:35", k1End: "10:00",
         k2Start: "10:05", k2End: "10:30",
-        k3Start: "10:35", k1End: "11:00",
+        k3Start: "10:35", k3End: "11:00",
         officers: ["Ust Rus", "Ust Nada", "Ust Tina", "Ust Iftitah"],
         soundSpec: "Speaker Aktif / Portable Sound + Mic",
         subGames: [
@@ -1030,7 +1070,7 @@
         duration: 30,
         k1Start: "10:00", k1End: "10:30",
         k2Start: "10:30", k2End: "11:00",
-        k3Start: "11:00", k1End: "11:30",
+        k3Start: "11:00", k3End: "11:30",
         officers: ["Tim Panitia BIAS", "Tim Konsumsi BIAS"],
         soundSpec: "Sound System Utama Hotel + Mic Wireless",
         subGames: [
@@ -1069,24 +1109,60 @@
       renderRundownTable();
       renderEquipmentChecklist();
       updateSimulatorUI();
+      updateSlidingPill();
 
-      window.addEventListener('resize', resizeCanvas);
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        updateSlidingPill();
+      });
     };
 
     // TAB NAVIGATION
+    function updateSlidingPill() {
+      const activeBtn = document.querySelector('.tab-btn.active');
+      const pill = document.getElementById('tab-sliding-pill');
+      const navGrid = document.getElementById('nav-grid');
+
+      if (activeBtn && pill && navGrid) {
+        const gridRect = navGrid.getBoundingClientRect();
+        const btnRect = activeBtn.getBoundingClientRect();
+
+        const left = btnRect.left - gridRect.left;
+        const top = btnRect.top - gridRect.top;
+        const width = btnRect.width;
+        const height = btnRect.height;
+
+        pill.style.left = `${left}px`;
+        pill.style.top = `${top}px`;
+        pill.style.width = `${width}px`;
+        pill.style.height = `${height}px`;
+        pill.style.opacity = '1';
+      }
+    }
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(`tab-${tabId}`).classList.add('active');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      if (activeBtn) activeBtn.classList.add('active');
 
-      document.getElementById('view-dashboard').classList.add('hidden');
-      document.getElementById('view-petugas').classList.add('hidden');
-      document.getElementById('view-simulator').classList.add('hidden');
-      document.getElementById('view-flowchart').classList.add('hidden');
-      document.getElementById('view-rundown').classList.add('hidden');
-      document.getElementById('view-hotel').classList.add('hidden');
-      document.getElementById('view-checklist').classList.add('hidden');
+      updateSlidingPill();
 
-      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      const viewIds = ['dashboard', 'petugas', 'simulator', 'flowchart', 'rundown', 'hotel', 'checklist'];
+      viewIds.forEach(id => {
+        const viewEl = document.getElementById(`view-${id}`);
+        if (viewEl) {
+          viewEl.classList.add('hidden');
+          viewEl.classList.remove('tab-view-animate');
+        }
+      });
+
+      const activeView = document.getElementById(`view-${tabId}`);
+      if (activeView) {
+        activeView.classList.remove('hidden');
+        // Force reflow to re-trigger smooth transition animation
+        void activeView.offsetWidth;
+        activeView.classList.add('tab-view-animate');
+      }
 
       if (tabId === 'flowchart') {
         setTimeout(resizeCanvas, 50);
